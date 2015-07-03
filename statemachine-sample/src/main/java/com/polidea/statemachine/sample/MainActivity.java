@@ -1,37 +1,86 @@
 package com.polidea.statemachine.sample;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.polidea.statemachine.sample.fragment.LoginFragment;
+import com.polidea.statemachine.sample.fragment.NotLoggedInFragment;
+import com.polidea.statemachine.sample.fragment.LoggedInFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoginStateableHandler.Delegate {
+
+    boolean loggedIn = false;
+
+    LoginStateableHandler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if(loggedIn) {
+            showFragment(new LoggedInFragment());
+        } else {
+            showFragment(new NotLoggedInFragment());
         }
 
-        return super.onOptionsItemSelected(item);
+        handler = new LoginStateableHandler(this, this);
+        handler.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        handler.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        handler.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        handler.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void loginSuccess() {
+
+    }
+
+    @Override
+    public void loginError() {
+
+    }
+
+    @Override
+    public void loginCancelled() {
+
+    }
+
+    public void loginButtonClicked() {
+        showFragment(new LoginFragment());
+
+    }
+
+    private void showFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
+        if(fragment.getClass().isInstance(currentFragment)) {
+            return;
+        }
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }
