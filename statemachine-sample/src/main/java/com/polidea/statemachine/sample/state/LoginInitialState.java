@@ -39,6 +39,6 @@ public class LoginInitialState extends State<LoginProvider, LoginActionInterface
         transaction.addToBackStack(null);
         transaction.commit();
 
-        getEventHandler().handleStateEvent(LoginEvents.START_LOGIN, this.getClass());
+        fireEvent(LoginEvents.START_LOGIN);
     }
 }

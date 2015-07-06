@@ -29,7 +29,7 @@ public class WaitingForLoginRequestState extends State<LoginProvider, LoginActio
 
                 showFragment(new LoggedInFragment());
 
-                getEventHandler().handleStateEvent(LoginEvents.FINISHED, WaitingForLoginRequestState.this.getClass());
+                fireEvent(LoginEvents.FINISHED);
             }
 
             @Override
@@ -38,7 +38,7 @@ public class WaitingForLoginRequestState extends State<LoginProvider, LoginActio
 
                 popFragment();
 
-                getEventHandler().handleStateEvent(LoginEvents.FINISHED, WaitingForLoginRequestState.this.getClass());
+                fireEvent(LoginEvents.FINISHED);
             }
         });
     }

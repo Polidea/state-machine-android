@@ -33,6 +33,6 @@ public class OnGoingLoginState extends State<LoginProvider, LoginActionInterface
     @Subscribe
     public void onLoginEvent(LoginEvent loginEvent) {
         networkManager.loginUser(loginEvent.getEmail(), loginEvent.getPassword());
-        getEventHandler().handleStateEvent(LoginEvents.SENDING_IN_PROGRESS, getClass());
+        fireEvent(LoginEvents.SENDING_IN_PROGRESS);
     }
 }
