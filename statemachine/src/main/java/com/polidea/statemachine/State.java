@@ -16,12 +16,6 @@ public abstract class State<PROVIDER extends StateProvider, ACTION_INTERFACE> {
         this.provider = provider;
         this.eventHandler = eventHandler;
         this.actionInterface = actionInterface;
-
-        injectDependencies();
-    }
-
-    protected void injectDependencies() {
-
     }
 
     public StateEventHandlerInterface getEventHandler() {

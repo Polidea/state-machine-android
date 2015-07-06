@@ -1,28 +1,29 @@
 package com.polidea.statemachine.sample;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import com.polidea.statemachine.sample.fragment.LoginFragment;
+import android.view.ViewGroup;
 import com.polidea.statemachine.sample.fragment.NotLoggedInFragment;
-import com.polidea.statemachine.sample.fragment.LoggedInFragment;
 
-public class MainActivity extends AppCompatActivity implements LoginStateableHandler.Delegate {
-
-    boolean loggedIn = false;
+public class MainActivity extends AppCompatActivity {
 
     LoginStateableHandler handler;
+
+    ViewGroup progressContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(loggedIn) {
-            showFragment(new LoggedInFragment());
-        } else {
+        progressContainer = (ViewGroup) findViewById(R.id.progress_container);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (fragmentManager.findFragmentById(R.id.fragment_container) == null) {
             showFragment(new NotLoggedInFragment());
         }
 
@@ -50,31 +51,11 @@ public class MainActivity extends AppCompatActivity implements LoginStateableHan
         handler.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void loginSuccess() {
-
-    }
-
-    @Override
-    public void loginError() {
-
-    }
-
-    @Override
-    public void loginCancelled() {
-
-    }
-
-    public void loginButtonClicked() {
-        showFragment(new LoginFragment());
-
-    }
-
     private void showFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
-        if(fragment.getClass().isInstance(currentFragment)) {
+        if (fragment.getClass().isInstance(currentFragment)) {
             return;
         }
 

@@ -4,4 +4,9 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="login">Login</string>
+    <string name="login_success">Login success!</string>
+    <string name="login_error">Login error!</string>
+    <string name="login_cancelled">Login cancelled</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 </resources>

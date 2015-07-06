@@ -7,4 +7,8 @@ public interface LoginActionInterface {
     void loginError();
 
     void loginCancelled();
+
+    void showLoginLoading();
+
+    void hideLoginLoading();
 }

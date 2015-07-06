@@ -7,10 +7,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import com.polidea.statemachine.sample.Application;
 import com.polidea.statemachine.sample.MainActivity;
 import com.polidea.statemachine.sample.R;
+import com.polidea.statemachine.sample.events.StartLoginEvent;
+import com.squareup.otto.Bus;
+import javax.inject.Inject;
 
 public class NotLoggedInFragment extends Fragment{
+
+    @Inject
+    Bus bus;
+
+    public NotLoggedInFragment() {
+        Application.getComponentInstance().inject(this);
+    }
 
     @Nullable
     @Override
@@ -26,9 +37,7 @@ public class NotLoggedInFragment extends Fragment{
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //I know that it doesn't look nice, but I wanted to do it fast
-                MainActivity activity = (MainActivity) getActivity();
-                activity.loginButtonClicked();
+                bus.post(new StartLoginEvent());
             }
         });
     }
