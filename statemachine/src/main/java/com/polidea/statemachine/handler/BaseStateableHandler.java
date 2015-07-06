@@ -1,7 +1,11 @@
-package com.polidea.statemachine;
+package com.polidea.statemachine.handler;
 
 import android.content.Context;
 import android.os.Bundle;
+import com.polidea.statemachine.StateChanger;
+import com.polidea.statemachine.StateMachine;
+import com.polidea.statemachine.StateProvider;
+import com.polidea.statemachine.Stateable;
 
 public abstract class BaseStateableHandler<STATE_PROVIDER extends StateProvider, ACTION_INTERFACE>
         implements Stateable<STATE_PROVIDER, ACTION_INTERFACE>, StateProvider {

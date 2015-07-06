@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.Toast;
-import com.polidea.statemachine.BaseStateableHandler;
+import com.polidea.statemachine.handler.BaseStateableHandler;
 import com.polidea.statemachine.State;
 import com.polidea.statemachine.StateMachine;
 import com.polidea.statemachine.sample.state.LoginActionInterface;
