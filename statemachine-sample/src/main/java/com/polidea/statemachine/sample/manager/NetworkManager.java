@@ -1,4 +1,4 @@
-package com.polidea.statemachine.sample;
+package com.polidea.statemachine.sample.manager;
 
 import android.os.Handler;
 
@@ -19,12 +19,14 @@ public class NetworkManager {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                listener.loginUserSuccess();
+                if(listener != null) {
+                    listener.loginUserSuccess();
+                }
             }
         }, 1500);
     }
 
-    public void addLoginUserListener(LoginUserListener listener) {
+    public void setLoginUserListener(LoginUserListener listener) {
         this.listener = listener;
     }
 }

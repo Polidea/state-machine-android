@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import com.polidea.statemachine.sample.Application;
-import com.polidea.statemachine.sample.MainActivity;
 import com.polidea.statemachine.sample.R;
 import com.polidea.statemachine.sample.events.StartLoginEvent;
 import com.squareup.otto.Bus;

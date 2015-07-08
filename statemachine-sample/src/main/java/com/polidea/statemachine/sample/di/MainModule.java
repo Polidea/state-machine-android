@@ -1,7 +1,7 @@
 package com.polidea.statemachine.sample.di;
 
 import android.app.Application;
-import com.polidea.statemachine.sample.NetworkManager;
+import com.polidea.statemachine.sample.manager.NetworkManager;
 import com.squareup.otto.Bus;
 import dagger.Module;
 import dagger.Provides;

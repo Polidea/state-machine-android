@@ -1,6 +1,7 @@
 package com.polidea.statemachine.sample.di;
 
 import android.app.Application;
+import com.polidea.statemachine.sample.LoginStateableHandler;
 import com.polidea.statemachine.sample.fragment.LoginFragment;
 import com.polidea.statemachine.sample.fragment.NotLoggedInFragment;
 import com.polidea.statemachine.sample.state.LoginInitialState;
@@ -22,6 +23,8 @@ public interface ApplicationComponent {
     void inject(OnGoingLoginState onGoingLoginState);
 
     void inject(WaitingForLoginRequestState waitingForLoginRequestState);
+
+    void inject(LoginStateableHandler loginStateableHandler);
 
     final class Initializer {
 

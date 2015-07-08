@@ -9,12 +9,14 @@
             android:inputType="textEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="sample.email@mail.com"
             android:hint="@string/email"/>
 
     <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="samplepassword"
             android:hint="@string/password"
             android:inputType="textPassword"/>
 

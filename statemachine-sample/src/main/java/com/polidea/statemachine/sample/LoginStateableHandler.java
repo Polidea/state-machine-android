@@ -1,26 +1,46 @@
 package com.polidea.statemachine.sample;
 
-import android.content.Context;
+import android.support.annotation.StringRes;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.Toast;
-import com.polidea.statemachine.handler.BaseStateableHandler;
 import com.polidea.statemachine.State;
 import com.polidea.statemachine.StateMachine;
+import com.polidea.statemachine.handler.BaseStateableHandler;
+import com.polidea.statemachine.sample.events.BackStackChangedEvent;
 import com.polidea.statemachine.sample.state.LoginActionInterface;
 import com.polidea.statemachine.sample.state.LoginEvents;
 import com.polidea.statemachine.sample.state.LoginInitialState;
 import com.polidea.statemachine.sample.state.LoginProvider;
 import com.polidea.statemachine.sample.state.OnGoingLoginState;
 import com.polidea.statemachine.sample.state.WaitingForLoginRequestState;
-import com.polidea.statemachine.states.InitialState;
+import com.squareup.otto.Bus;
+import javax.inject.Inject;
 
 public class LoginStateableHandler extends BaseStateableHandler<LoginProvider, LoginActionInterface> implements LoginProvider, LoginActionInterface {
-    private final MainActivity mainActivity;
 
-    protected LoginStateableHandler(MainActivity delegate, Context context) {
-        super(context);
-        this.mainActivity = delegate;
+    @Inject
+    Bus bus;
+
+    private final LoginActivity mainActivity;
+
+    protected LoginStateableHandler(LoginActivity mainActivity) {
+        super(mainActivity);
+        Application.getComponentInstance().inject(this);
+        this.mainActivity = mainActivity;
+        addOnBackStackChangedListener();
+    }
+
+    private void addOnBackStackChangedListener() {
+        final FragmentManager supportFragmentManager = mainActivity.getSupportFragmentManager();
+        supportFragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                Fragment currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container);
+                bus.post(new BackStackChangedEvent(currentFragment));
+            }
+        });
     }
 
     @Override
@@ -48,9 +68,10 @@ public class LoginStateableHandler extends BaseStateableHandler<LoginProvider, L
         stateMachine.addTransitionFromClass(LoginInitialState.class, LoginEvents.START_LOGIN, OnGoingLoginState.class);
 
         stateMachine.addTransitionFromClass(OnGoingLoginState.class, LoginEvents.CANCELLED, LoginInitialState.class);
-        stateMachine.addTransitionFromClass(OnGoingLoginState.class, LoginEvents.SENDING_IN_PROGRESS, WaitingForLoginRequestState.class);
+        stateMachine.addTransitionFromClass(OnGoingLoginState.class, LoginEvents.LOGIN_IN_PROGRESS, WaitingForLoginRequestState.class);
 
-        stateMachine.addTransitionFromClass(WaitingForLoginRequestState.class, LoginEvents.FINISHED, InitialState.class);
+        stateMachine.addTransitionFromClass(WaitingForLoginRequestState.class, LoginEvents.FINISHED, LoginInitialState.class);
+        stateMachine.addTransitionFromClass(WaitingForLoginRequestState.class, LoginEvents.CANCELLED, LoginInitialState.class);
     }
 
     @Override
@@ -60,17 +81,17 @@ public class LoginStateableHandler extends BaseStateableHandler<LoginProvider, L
 
     @Override
     public void loginSuccess() {
-        Toast.makeText(mainActivity, R.string.login_success, Toast.LENGTH_SHORT).show();
+        showMessage(R.string.login_success);
     }
 
     @Override
     public void loginError() {
-        Toast.makeText(mainActivity, R.string.login_error, Toast.LENGTH_SHORT).show();
+        showMessage(R.string.login_error);
     }
 
     @Override
     public void loginCancelled() {
-        Toast.makeText(mainActivity, R.string.login_cancelled, Toast.LENGTH_SHORT).show();
+        showMessage(R.string.login_cancelled);
     }
 
     @Override
@@ -81,5 +102,9 @@ public class LoginStateableHandler extends BaseStateableHandler<LoginProvider, L
     @Override
     public void hideLoginLoading() {
         mainActivity.progressContainer.setVisibility(View.GONE);
+    }
+
+    public void showMessage(@StringRes int messageRes) {
+        Toast.makeText(mainActivity, messageRes, Toast.LENGTH_SHORT).show();
     }
 }

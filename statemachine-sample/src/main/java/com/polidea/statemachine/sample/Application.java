@@ -1,5 +1,6 @@
 package com.polidea.statemachine.sample;
 
+import com.polidea.statemachine.log.Logger;
 import com.polidea.statemachine.sample.di.ApplicationComponent;
 
 public class Application extends android.app.Application {
@@ -13,6 +14,8 @@ public class Application extends android.app.Application {
         super.onCreate();
 
         instance = this;
+
+        Logger.setEnabled(true);
 
         component = ApplicationComponent.Initializer.init(this);
     }

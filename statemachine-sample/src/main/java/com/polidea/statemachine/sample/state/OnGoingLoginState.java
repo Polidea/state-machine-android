@@ -1,38 +1,30 @@
 package com.polidea.statemachine.sample.state;
 
-import com.polidea.statemachine.State;
 import com.polidea.statemachine.sample.Application;
-import com.polidea.statemachine.sample.NetworkManager;
+import com.polidea.statemachine.sample.events.BackStackChangedEvent;
 import com.polidea.statemachine.sample.events.LoginEvent;
-import com.squareup.otto.Bus;
+import com.polidea.statemachine.sample.manager.NetworkManager;
 import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 
-public class OnGoingLoginState extends State<LoginProvider, LoginActionInterface>{
-
-    @Inject
-    Bus bus;
+public class OnGoingLoginState extends BaseLoginState {
 
     @Inject
     NetworkManager networkManager;
 
-    public OnGoingLoginState() {
+    @Override
+    protected void injectDependencies() {
         Application.getComponentInstance().inject(this);
-    }
-
-    @Override
-    public void onStateApplied() {
-        bus.register(this);
-    }
-
-    @Override
-    public void onStateLeft() {
-        bus.unregister(this);
     }
 
     @Subscribe
     public void onLoginEvent(LoginEvent loginEvent) {
         networkManager.loginUser(loginEvent.getEmail(), loginEvent.getPassword());
-        fireEvent(LoginEvents.SENDING_IN_PROGRESS);
+        fireEvent(LoginEvents.LOGIN_IN_PROGRESS);
+    }
+
+    @Subscribe
+    public void onBackStackChangedEvent(BackStackChangedEvent backStackChangedEvent) {
+        fireEvent(LoginEvents.CANCELLED);
     }
 }

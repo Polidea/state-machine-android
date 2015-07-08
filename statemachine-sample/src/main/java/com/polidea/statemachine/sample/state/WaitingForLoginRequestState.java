@@ -1,33 +1,34 @@
 package com.polidea.statemachine.sample.state;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import com.polidea.statemachine.State;
 import com.polidea.statemachine.sample.Application;
-import com.polidea.statemachine.sample.NetworkManager;
+import com.polidea.statemachine.sample.events.BackStackChangedEvent;
 import com.polidea.statemachine.sample.fragment.LoggedInFragment;
+import com.polidea.statemachine.sample.manager.NetworkManager;
+import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 
-public class WaitingForLoginRequestState extends State<LoginProvider, LoginActionInterface> {
+public class WaitingForLoginRequestState extends BaseLoginState {
 
     @Inject
     NetworkManager networkManager;
 
-    public WaitingForLoginRequestState() {
+    @Override
+    protected void injectDependencies() {
         Application.getComponentInstance().inject(this);
     }
 
     @Override
     public void onStateApplied() {
+        super.onStateApplied();
+
         getActionInterface().showLoginLoading();
 
-        networkManager.addLoginUserListener(new NetworkManager.LoginUserListener() {
+        networkManager.setLoginUserListener(new NetworkManager.LoginUserListener() {
             @Override
             public void loginUserSuccess() {
                 getActionInterface().loginSuccess();
 
-                showFragment(new LoggedInFragment());
+                changeFragment(new LoggedInFragment());
 
                 fireEvent(LoginEvents.FINISHED);
             }
@@ -43,23 +44,16 @@ public class WaitingForLoginRequestState extends State<LoginProvider, LoginActio
         });
     }
 
-    private void popFragment() {
-        FragmentManager fragmentManager = getProvider().provideFragmentManager();
-        fragmentManager.popBackStack();
-    }
-
-    private void showFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getProvider().provideFragmentManager();
-        int fragmentContainerId = getProvider().provideFragmentContainerId();
-
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(fragmentContainerId, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
     @Override
     public void onStateLeft() {
+        super.onStateLeft();
+
+        networkManager.setLoginUserListener(null);
         getActionInterface().hideLoginLoading();
+    }
+
+    @Subscribe
+    public void onBackStackChangedEvent(BackStackChangedEvent backStackChangedEvent) {
+        fireEvent(LoginEvents.CANCELLED);
     }
 }

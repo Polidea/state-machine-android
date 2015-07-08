@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 import com.polidea.statemachine.sample.fragment.NotLoggedInFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     LoginStateableHandler handler;
 
@@ -17,17 +17,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
         progressContainer = (ViewGroup) findViewById(R.id.progress_container);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        showFragment(new NotLoggedInFragment());
 
-        if (fragmentManager.findFragmentById(R.id.fragment_container) == null) {
-            showFragment(new NotLoggedInFragment());
-        }
-
-        handler = new LoginStateableHandler(this, this);
+        handler = new LoginStateableHandler(this);
         handler.onCreate(savedInstanceState);
     }
 
@@ -55,13 +51,12 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         Fragment currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
-        if (fragment.getClass().isInstance(currentFragment)) {
+        if (currentFragment != null) {
             return;
         }
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);
-        transaction.addToBackStack(null);
         transaction.commit();
     }
 }
