@@ -1,6 +1,6 @@
 # State Machine for Android
 
-Lightweight state machine implementation that is used in Polidea.
+A lightweight state machine implementation for Android.
 
 ## Download
 
@@ -17,7 +17,7 @@ The easiest way to use StateMachine is to extend `BaseStateableHandler`. It have
 
 Sample `BaseStateableHandler`:
 
-```
+```java
 public class LoginStateableHandler extends BaseStateableHandler<LoginProvider, LoginActionInterface> implements LoginProvider, LoginActionInterface {
     @Override
     public LoginProvider getStateProvider() {
@@ -53,9 +53,17 @@ public class LoginStateableHandler extends BaseStateableHandler<LoginProvider, L
 }
 ```
 
-You must remember to call handler `onCreate(Bundle savedInstanceState)`, `onResume()`, `onPause()`, `onSaveInstanceState(Bundle outState)` methods in appropriate Fragment/Activity lifecycle method's. Sample usage:
+As you can see here, state machine contains 3 states: `LoginInitialState`, `OnGoingLoginState` and `WaitingForLoginRequestState`. Initial state is `LoginInitialState`. Looking at one of transition:
 
+```java
+stateMachine.addTransitionFromClass(LoginInitialState.class, LoginEvents.START_LOGIN, OnGoingLoginState.class);
 ```
+
+means that, when state machine is in `LoginInitialState` and that state will fire `LoginEvents.START_LOGIN` event, then state machine should go to state `OnGoingLoginState`.
+
+To make this `LoginStateableHandler` work, you must remember to call `onCreate(Bundle savedInstanceState)`, `onResume()`, `onPause()`, `onSaveInstanceState(Bundle outState)` methods in appropriate Fragment/Activity lifecycle method's. Sample usage:
+
+```java
 @Override
 protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -83,14 +91,32 @@ protected void onSaveInstanceState(Bundle outState) {
 }
 ```
 
-Each state should extends `State` that contains two methods:
+Of course you can initialize handler from other places, not only Fragment/Activity. Here is an example of starting handler in singleton class like `Application`:
+
+```java
+public class MyApplication extends Application {
+
+    LoginStateableHandler handler;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        handler = new LoginStateableHandler();
+        handler.onCreate(null);
+        handler.onResume();
+    }
+}
+```
+
+State machine consist of states. Each state should extends `State` that contains two methods:
 
 * `onStateApplied()` - called when entering state
 * `onStateLeft()` - called when leaving state
 
 Each state should call `fireEvent(int eventId)` when it finish it's job. Sample `State`:
 
-```
+```java
 public class OnGoingLoginState extends State<LoginProvider, LoginActionInterface>{
 
     @Inject
@@ -114,15 +140,19 @@ public class OnGoingLoginState extends State<LoginProvider, LoginActionInterface
     }
 
     @Subscribe
-    public void onLoginEvent(LoginEvent loginEvent) {
+    public void onBusLoginEvent(BusLoginEvent loginEvent) {
         networkManager.loginUser(loginEvent.getEmail(), loginEvent.getPassword());
         fireEvent(LoginEvents.SENDING_IN_PROGRESS);
     }
 }
 ```
 
+It is nice to use some Bus implementation, like https://github.com/greenrobot/EventBus or https://github.com/square/otto, to receive applications events, e.g. `OnGoingLoginState` should login user when `BusLoginEvent` is received (event was send by Fragment after 'Login' button clicked).
+
 ## Used libraries
 
+* **[otto]** https://github.com/square/otto
+* **[dagger 2]** https://github.com/google/dagger
 * **[spock]** https://code.google.com/p/spock/
 * **[android support library v7]**
 
