@@ -4,7 +4,47 @@ A lightweight state machine implementation for Android.
 
 ## Download
 
-//TODO
+Via gradle. In main build.gradle :
+
+```gradle
+allprojects {
+    repositories {
+        ...
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+        }
+    }
+}
+```
+
+Add library:
+
+```gradle
+compile 'com.polidea:statemachine:1.0.0-SNAPSHOT'
+```
+
+or Maven. Add plugin repository:
+
+```xml
+<pluginRepository>
+    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</pluginRepository>
+```
+
+Add library:
+
+```xml
+<dependency>
+  <groupId>com.polidea</groupId>
+  <artifactId>statemachine</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+
+**It is a stable version of library**
 
 ## Usage
 
