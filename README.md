@@ -8,6 +8,8 @@ A lightweight state machine implementation for Android.
 
 ## Usage
 
+### Creating custom BaseStateableHandler
+
 The easiest way to use StateMachine is to extend `BaseStateableHandler`. It have 4 main methods that we should override:
 
 * `getStateProvider()` - used by State's to get data from our Fragment/Activity. Base StateProvider contains one method `provideContext()`
@@ -61,7 +63,9 @@ stateMachine.addTransitionFromClass(LoginInitialState.class, LoginEvents.START_L
 
 means that, when state machine is in `LoginInitialState` and that state will fire `LoginEvents.START_LOGIN` event, then state machine should go to state `OnGoingLoginState`.
 
-To make this `LoginStateableHandler` work, you must remember to call `onCreate(Bundle savedInstanceState)`, `onResume()`, `onPause()`, `onSaveInstanceState(Bundle outState)` methods in appropriate Fragment/Activity lifecycle method's. Sample usage:
+### Starting custom BaseStateableHandler
+
+To make `LoginStateableHandler` work, you must remember to call it's `onCreate(Bundle savedInstanceState)`, `onResume()`, `onPause()`, `onSaveInstanceState(Bundle outState)` methods in appropriate Fragment/Activity lifecycle method's. Sample usage:
 
 ```java
 @Override
@@ -109,6 +113,8 @@ public class MyApplication extends Application {
 }
 ```
 
+### Creating states
+
 State machine consist of states. Each state should extends `State` that contains two methods:
 
 * `onStateApplied()` - called when entering state
@@ -147,7 +153,8 @@ public class OnGoingLoginState extends State<LoginProvider, LoginActionInterface
 }
 ```
 
-It is nice to use some Bus implementation, like https://github.com/greenrobot/EventBus or https://github.com/square/otto, to receive applications events, e.g. `OnGoingLoginState` should login user when `BusLoginEvent` is received (event was send by Fragment after 'Login' button clicked).
+It is nice to use some Bus implementation, like [EventBus](https://github.com/greenrobot/EventBus) or [Otto](https://github.com/square/otto), to receive applications events.<p/>
+In that example we use [Otto](https://github.com/square/otto) for sending `BusLoginEvent` (it may be send by activity when 'Login' button tapped) and receiving that event in `OnGoingLoginState`.
 
 ## Used libraries
 
